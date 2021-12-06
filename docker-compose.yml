@@ -2,6 +2,33 @@ version: '3.8'
 
 services:
 
+  # Simple file server for hosting database dump files
+  importer:
+    image: caddy:2-alpine
+    hostname: cockroach-importer
+    networks:
+      - cockroachdb_net
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - "node.hostname == main-1"
+      update_config:
+        order: start-first
+      resources:
+        reservations:
+          memory: 5M
+          cpus: '0.05'
+        limits:
+          memory: 100M
+          cpus: '0.1'
+    volumes:
+      - importer_data:/srv
+    configs:
+      - source: importer_caddyfile
+        target: /etc/caddy/Caddyfile
+
   # Simple TCP LB for connecting to CockroachDB
   loadbalancer:
     image: haproxy:2.5-alpine
@@ -151,3 +178,5 @@ volumes:
 configs:
   haproxy_config:
     file: ./haproxy.cfg
+  importer_caddyfile:
+    file: ./Importer.Caddyfile
