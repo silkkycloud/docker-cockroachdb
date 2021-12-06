@@ -34,6 +34,7 @@ services:
     networks:
       - cockroachdb_net
       - metrics_net
+      - public
     deploy:
       mode: replicated
       replicas: 1
