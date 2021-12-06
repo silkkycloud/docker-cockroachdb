@@ -3,25 +3,28 @@ version: '3.8'
 services:
 
   # Simple TCP LB for connecting to CockroachDB
-  # loadbalancer:
-  #   image: haproxy:2.5-alpine
-  #   hostname: cockroach-lb
-  #   networks:
-  #     - cockroachdb_net
-  #   deploy:
-  #     mode: replicated
-  #     replicas: 3
-  #     update_config:
-  #       parallelism: 1
-  #       failure_action: rollback
-  #       delay: 10s
-  #     resources:
-  #       reservations:
-  #         memory: 5M
-  #         cpus: '0.05'
-  #       limits:
-  #         memory: 50M
-  #         cpus: '0.1'
+  loadbalancer:
+    image: haproxy:2.5-alpine
+    hostname: cockroach-lb
+    networks:
+      - cockroachdb_net
+    deploy:
+      mode: replicated
+      replicas: 3
+      update_config:
+        parallelism: 1
+        failure_action: rollback
+        delay: 10s
+      resources:
+        reservations:
+          memory: 5M
+          cpus: '0.05'
+        limits:
+          memory: 100M
+          cpus: '0.1'
+    configs:
+      - source: haproxy_config
+        target: /usr/local/etc/haproxy/haproxy.cfg
 
   db-1:
     image: cockroachdb/cockroach:v21.2.2
@@ -143,3 +146,7 @@ volumes:
   database-1:
   database-2:
   database-3:
+
+configs:
+  haproxy_config:
+    file: ./haproxy.cfg
