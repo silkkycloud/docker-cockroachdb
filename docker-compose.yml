@@ -53,6 +53,8 @@ services:
         prometheus-path: /_status/vars
     volumes:
       - database-1:/cockroach/cockroach-data
+      # Fix time sync issue
+      - /etc/localtime:/etc/localtime:ro
 
   db-2:
     image: cockroachdb/cockroach:v21.2.2
@@ -84,6 +86,8 @@ services:
         prometheus-path: /_status/vars
     volumes:
       - database-2:/cockroach/cockroach-data
+      # Fix time sync issue
+      - /etc/localtime:/etc/localtime:ro
 
   db-3:
     image: cockroachdb/cockroach:v21.2.2
@@ -115,6 +119,8 @@ services:
         prometheus-path: /_status/vars
     volumes:
       - database-3:/cockroach/cockroach-data
+      # Fix time sync issue
+      - /etc/localtime:/etc/localtime:ro
 
 networks:
   # Create:
