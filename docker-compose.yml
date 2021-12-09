@@ -7,7 +7,6 @@ services:
     image: haproxy:2.5-alpine
     hostname: cockroach-lb
     networks:
-      - backend
       - cockroachdb_net
     deploy:
       mode: replicated
@@ -33,7 +32,7 @@ services:
     command: start --join=cockroachdb-1:26257,cockroachdb-2:26257,cockroachdb-3:26257 --cache=.25 --max-sql-memory=.25 --logtostderr --insecure 
     hostname: cockroachdb-1
     networks:
-      - backend
+      - cockroachdb_net
       - metrics_net
       - public
     deploy:
@@ -78,7 +77,7 @@ services:
     command: start --join=cockroachdb-1:26257,cockroachdb-2:26257,cockroachdb-3:26257 --cache=.25 --max-sql-memory=.25 --logtostderr --insecure 
     hostname: cockroachdb-2
     networks:
-      - backend
+      - cockroachdb_net
       - metrics_net
     deploy:
       mode: replicated
@@ -112,7 +111,7 @@ services:
     command: start --join=cockroachdb-1:26257,cockroachdb-2:26257,cockroachdb-3:26257 --cache=.25 --max-sql-memory=.25 --logtostderr --insecure 
     hostname: cockroachdb-3
     networks:
-      - backend
+      - cockroachdb_net
       - metrics_net
     deploy:
       mode: replicated
@@ -177,12 +176,6 @@ networks:
   #   cockroachdb_net
   cockroachdb_net:
     external: true
-  backend:
-    driver: overlay
-    internal: true
-    driver_opts:
-      encrypted: "true"
-      com.docker.network.driver.mtu: 1450
   # Collect Prometheus metrics
   metrics_net:
     external: true
