@@ -79,9 +79,20 @@ services:
           cpus: '0.3'
           memory: 2G
       labels:
-        prometheus-job: cockroachdb-1
-        prometheus-port: 8080
-        prometheus-path: /_status/vars
+        # Prometheus
+        - "prometheus-job=cockroachdb"
+        - "prometheus-port=8080"
+        - "prometheus-path=/_status/vars"
+        # Traefik
+        - "traefik.enable=true"
+        # Router
+        - "traefik.http.routers.cockroachdb-admin.rule=Host(`${HOSTNAME}`)"
+        - "traefik.http.routers.cockroachdb-admin.entrypoints=websecure"
+        - "traefik.http.routers.cockroachdb-admin.tls=true"
+        - "traefik.http.routers.cockroachdb-admin.middlewares=authelia@docker"
+        - "traefik.http.routers.cockroachdb-admin.service=cockroachdb-admin-service"
+        # Service
+        - "traefik.http.services.cockroachdb-admin-service.loadbalancer.server.port=8080"
     volumes:
       - database-1:/cockroach/cockroach-data
       # Fix time sync issue
@@ -112,9 +123,10 @@ services:
           cpus: '0.3'
           memory: 2G
       labels:
-        prometheus-job: cockroachdb-2
-        prometheus-port: 8080
-        prometheus-path: /_status/vars
+        # Prometheus
+        - "prometheus-job=cockroachdb"
+        - "prometheus-port=8080"
+        - "prometheus-path=/_status/vars"
     volumes:
       - database-2:/cockroach/cockroach-data
       # Fix time sync issue
@@ -145,9 +157,10 @@ services:
           cpus: '0.3'
           memory: 2G
       labels:
-        prometheus-job: cockroachdb-3
-        prometheus-port: 8080
-        prometheus-path: /_status/vars
+        # Prometheus
+        - "prometheus-job=cockroachdb"
+        - "prometheus-port=8080"
+        - "prometheus-path=/_status/vars"
     volumes:
       - database-3:/cockroach/cockroach-data
       # Fix time sync issue
