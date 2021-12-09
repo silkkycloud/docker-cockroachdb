@@ -32,9 +32,9 @@ services:
     command: start --join=cockroachdb-1:26257,cockroachdb-2:26257,cockroachdb-3:26257 --cache=.25 --max-sql-memory=.25 --logtostderr --insecure 
     hostname: cockroachdb-1
     networks:
-      - cockroachdb_net
-      - metrics_net
       - public
+      - metrics_net
+      - cockroachdb_net
     deploy:
       mode: replicated
       replicas: 1
@@ -77,8 +77,8 @@ services:
     command: start --join=cockroachdb-1:26257,cockroachdb-2:26257,cockroachdb-3:26257 --cache=.25 --max-sql-memory=.25 --logtostderr --insecure 
     hostname: cockroachdb-2
     networks:
-      - cockroachdb_net
       - metrics_net
+      - cockroachdb_net
     deploy:
       mode: replicated
       replicas: 1
@@ -111,8 +111,8 @@ services:
     command: start --join=cockroachdb-1:26257,cockroachdb-2:26257,cockroachdb-3:26257 --cache=.25 --max-sql-memory=.25 --logtostderr --insecure 
     hostname: cockroachdb-3
     networks:
-      - cockroachdb_net
       - metrics_net
+      - cockroachdb_net
     deploy:
       mode: replicated
       replicas: 1
