@@ -2,38 +2,12 @@ version: '3.8'
 
 services:
 
-  # Simple file server for hosting database dump files
-  importer:
-    image: caddy:2-alpine
-    hostname: cockroach-importer
-    networks:
-      - cockroachdb_net
-    deploy:
-      mode: replicated
-      replicas: 1
-      placement:
-        constraints:
-          - "node.hostname == main-1"
-      update_config:
-        order: start-first
-      resources:
-        reservations:
-          memory: 5M
-          cpus: '0.05'
-        limits:
-          memory: 100M
-          cpus: '0.1'
-    volumes:
-      - importer_data:/srv
-    configs:
-      - source: importer_caddyfile
-        target: /etc/caddy/Caddyfile
-
   # Simple TCP LB for connecting to CockroachDB
   loadbalancer:
     image: haproxy:2.5-alpine
     hostname: cockroach-lb
     networks:
+      - backend
       - cockroachdb_net
     deploy:
       mode: replicated
@@ -59,7 +33,7 @@ services:
     command: start --join=cockroachdb-1:26257,cockroachdb-2:26257,cockroachdb-3:26257 --cache=.25 --max-sql-memory=.25 --logtostderr --insecure 
     hostname: cockroachdb-1
     networks:
-      - cockroachdb_net
+      - backend
       - metrics_net
       - public
     deploy:
@@ -104,7 +78,7 @@ services:
     command: start --join=cockroachdb-1:26257,cockroachdb-2:26257,cockroachdb-3:26257 --cache=.25 --max-sql-memory=.25 --logtostderr --insecure 
     hostname: cockroachdb-2
     networks:
-      - cockroachdb_net
+      - backend
       - metrics_net
     deploy:
       mode: replicated
@@ -138,7 +112,7 @@ services:
     command: start --join=cockroachdb-1:26257,cockroachdb-2:26257,cockroachdb-3:26257 --cache=.25 --max-sql-memory=.25 --logtostderr --insecure 
     hostname: cockroachdb-3
     networks:
-      - cockroachdb_net
+      - backend
       - metrics_net
     deploy:
       mode: replicated
@@ -166,6 +140,33 @@ services:
       # Fix time sync issue
       - /etc/localtime:/etc/localtime:ro
 
+  # Simple file server for hosting database dump files
+  importer:
+    image: caddy:2-alpine
+    hostname: cockroach-importer
+    networks:
+      - backend
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - "node.hostname == main-1"
+      update_config:
+        order: start-first
+      resources:
+        reservations:
+          memory: 5M
+          cpus: '0.05'
+        limits:
+          memory: 100M
+          cpus: '0.1'
+    volumes:
+      - importer_data:/srv
+    configs:
+      - source: importer_caddyfile
+        target: /etc/caddy/Caddyfile
+
 networks:
   # Create:
   # docker network create \
@@ -176,10 +177,15 @@ networks:
   #   cockroachdb_net
   cockroachdb_net:
     external: true
+  backend:
+    driver: overlay
+    internal: true
+    driver_opts:
+      encrypted: "true"
+      com.docker.network.driver.mtu: 1450
   # Collect Prometheus metrics
   metrics_net:
     external: true
-
   public:
     external: true
 
