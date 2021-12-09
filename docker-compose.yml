@@ -144,7 +144,7 @@ services:
     image: caddy:2-alpine
     hostname: cockroach-importer
     networks:
-      - backend
+      - cockroachdb_net
     deploy:
       mode: replicated
       replicas: 1
