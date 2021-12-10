@@ -28,8 +28,13 @@ services:
 
   db-1:
     image: cockroachdb/cockroach:v21.2.2
-    # (--insecure) is ok because cluster is using private networking and encryption is supplied using IPSec
-    command: start --join=cockroachdb-1:26257,cockroachdb-2:26257,cockroachdb-3:26257 --cache=.25 --max-sql-memory=.25 --logtostderr --insecure 
+    command:
+      - start --join=cockroachdb-1:26257,cockroachdb-2:26257,cockroachdb-3:26257
+      - --cache=.25
+      - --max-sql-memory=.25
+      - --logtostderr
+      - --certs-dir=/run/secrets
+      - --accept-sql-without-tls
     hostname: cockroachdb-1
     networks:
       - public
@@ -70,11 +75,34 @@ services:
       - database-1:/cockroach/cockroach-data
       # Fix time sync issue
       - /etc/localtime:/etc/localtime:ro
+    secrets:
+      # CA certificate
+      - source: cockroach-ca-crt
+        target: ca.crt
+      # Node certificate
+      - source: cockroachdb-1-crt
+        target: node.crt
+      # Node key
+      - source: cockroachdb-1-key
+        target: node.key
+        mode: 0600
+      # Root certificate
+      - source: cockroach-root-crt
+        target: client.root.crt
+      # Root key
+      - source: cockroach-root-key
+        target: client.root.key
+        mode: 0600
 
   db-2:
     image: cockroachdb/cockroach:v21.2.2
-    # (--insecure) is ok because cluster is using private networking and encryption is supplied using IPSec
-    command: start --join=cockroachdb-1:26257,cockroachdb-2:26257,cockroachdb-3:26257 --cache=.25 --max-sql-memory=.25 --logtostderr --insecure 
+    command:
+      - start --join=cockroachdb-1:26257,cockroachdb-2:26257,cockroachdb-3:26257
+      - --cache=.25
+      - --max-sql-memory=.25
+      - --logtostderr
+      - --certs-dir=/run/secrets
+      - --accept-sql-without-tls
     hostname: cockroachdb-2
     networks:
       - metrics_net
@@ -104,11 +132,34 @@ services:
       - database-2:/cockroach/cockroach-data
       # Fix time sync issue
       - /etc/localtime:/etc/localtime:ro
+    secrets:
+      # CA certificate
+      - source: cockroach-ca-crt
+        target: ca.crt
+      # Node certificate
+      - source: cockroachdb-2-crt
+        target: node.crt
+      # Node key
+      - source: cockroachdb-2-key
+        target: node.key
+        mode: 0600
+      # Root certificate
+      - source: cockroach-root-crt
+        target: client.root.crt
+      # Root key
+      - source: cockroach-root-key
+        target: client.root.key
+        mode: 0600
 
   db-3:
     image: cockroachdb/cockroach:v21.2.2
-    # (--insecure) is ok because cluster is using private networking and encryption is supplied using IPSec
-    command: start --join=cockroachdb-1:26257,cockroachdb-2:26257,cockroachdb-3:26257 --cache=.25 --max-sql-memory=.25 --logtostderr --insecure 
+    command:
+      - start --join=cockroachdb-1:26257,cockroachdb-2:26257,cockroachdb-3:26257
+      - --cache=.25
+      - --max-sql-memory=.25
+      - --logtostderr
+      - --certs-dir=/run/secrets
+      - --accept-sql-without-tls
     hostname: cockroachdb-3
     networks:
       - metrics_net
@@ -138,6 +189,24 @@ services:
       - database-3:/cockroach/cockroach-data
       # Fix time sync issue
       - /etc/localtime:/etc/localtime:ro
+    secrets:
+      # CA certificate
+      - source: cockroach-ca-crt
+        target: ca.crt
+      # Node certificate
+      - source: cockroachdb-3-crt
+        target: node.crt
+      # Node key
+      - source: cockroachdb-3-key
+        target: node.key
+        mode: 0600
+      # Root certificate
+      - source: cockroach-root-crt
+        target: client.root.crt
+      # Root key
+      - source: cockroach-root-key
+        target: client.root.key
+        mode: 0600
 
   # Simple file server for hosting database dump files
   importer:
@@ -193,3 +262,27 @@ configs:
     file: ./haproxy.cfg
   importer_caddyfile:
     file: ./Importer.Caddyfile
+
+secrets:
+  # CA certificate
+  cockroach-ca-crt:
+    external: true
+  # Node certificates
+  cockroachdb-1-crt:
+    external: true
+  cockroachdb-2-crt:
+    external: true
+  cockroachdb-3-crt:
+    external: true
+  # Node keys
+  cockroachdb-1-key:
+    external: true
+  cockroachdb-2-key:
+    external: true
+  cockroachdb-3-key:
+    external: true
+  # Root certificate
+  cockroach-root-crt:
+    external: true
+  cockroach-root-key:
+    external: true
