@@ -28,13 +28,7 @@ services:
 
   db-1:
     image: cockroachdb/cockroach:v21.2.2
-    command:
-      - start --join=cockroachdb-1:26257,cockroachdb-2:26257,cockroachdb-3:26257
-      - --cache=.25
-      - --max-sql-memory=.25
-      - --logtostderr
-      - --certs-dir=/run/secrets
-      - --accept-sql-without-tls
+    command: start --join=cockroachdb-1:26257,cockroachdb-2:26257,cockroachdb-3:26257 --cache=.25 --max-sql-memory=.25 --logtostderr --certs-dir=/run/secrets --accept-sql-without-tls
     hostname: cockroachdb-1
     networks:
       - public
@@ -96,13 +90,7 @@ services:
 
   db-2:
     image: cockroachdb/cockroach:v21.2.2
-    command:
-      - start --join=cockroachdb-1:26257,cockroachdb-2:26257,cockroachdb-3:26257
-      - --cache=.25
-      - --max-sql-memory=.25
-      - --logtostderr
-      - --certs-dir=/run/secrets
-      - --accept-sql-without-tls
+    command: start --join=cockroachdb-1:26257,cockroachdb-2:26257,cockroachdb-3:26257 --cache=.25 --max-sql-memory=.25 --logtostderr --certs-dir=/run/secrets --accept-sql-without-tls
     hostname: cockroachdb-2
     networks:
       - metrics_net
@@ -153,13 +141,7 @@ services:
 
   db-3:
     image: cockroachdb/cockroach:v21.2.2
-    command:
-      - start --join=cockroachdb-1:26257,cockroachdb-2:26257,cockroachdb-3:26257
-      - --cache=.25
-      - --max-sql-memory=.25
-      - --logtostderr
-      - --certs-dir=/run/secrets
-      - --accept-sql-without-tls
+    command: start --join=cockroachdb-1:26257,cockroachdb-2:26257,cockroachdb-3:26257 --cache=.25 --max-sql-memory=.25 --logtostderr --certs-dir=/run/secrets --accept-sql-without-tls
     hostname: cockroachdb-3
     networks:
       - metrics_net
