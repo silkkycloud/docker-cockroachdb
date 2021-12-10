@@ -65,6 +65,7 @@ services:
         - "traefik.http.routers.cockroachdb-admin.service=cockroachdb-admin-service"
         # Service
         - "traefik.http.services.cockroachdb-admin-service.loadbalancer.server.port=8080"
+        - "traefik.http.services.cockroachdb-admin-service.loadbalancer.serversTransport=cockroach-admin@file"
     volumes:
       - database-1:/cockroach/cockroach-data
       # Fix time sync issue
