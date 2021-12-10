@@ -90,7 +90,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - "node.hostname == main-2"
+          - "node.hostname == main.web02.hel.hcloud.silkky.cloud"
       update_config:
         failure_action: rollback
         delay: 10s
