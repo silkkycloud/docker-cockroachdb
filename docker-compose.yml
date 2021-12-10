@@ -62,10 +62,7 @@ services:
         - "traefik.http.routers.cockroachdb-admin.entrypoints=websecure"
         - "traefik.http.routers.cockroachdb-admin.tls=true"
         - "traefik.http.routers.cockroachdb-admin.middlewares=authelia@docker"
-        - "traefik.http.routers.cockroachdb-admin.service=cockroachdb-admin-service"
-        # Service
-        - "traefik.http.services.cockroachdb-admin-service.loadbalancer.server.port=8080"
-        - "traefik.http.services.cockroachdb-admin-service.loadbalancer.serverstransport=cockroach-admin"
+        - "traefik.http.routers.cockroachdb-admin.service=cockroachdb-admin-service@file"
     volumes:
       - database-1:/cockroach/cockroach-data
       # Fix time sync issue
