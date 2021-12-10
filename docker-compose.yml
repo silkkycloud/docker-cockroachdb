@@ -11,6 +11,9 @@ services:
     deploy:
       mode: replicated
       replicas: 3
+      placement:
+        constraints:
+          - "node.labels.web_server == true"
       update_config:
         parallelism: 1
         failure_action: rollback
