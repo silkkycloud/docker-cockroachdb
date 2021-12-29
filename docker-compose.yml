@@ -2,9 +2,12 @@ version: '3.8'
 
 services:
 
-  # Simple TCP LB for connecting to CockroachDB
   loadbalancer:
-    image: haproxy:2.5-alpine
+    image: ghcr.io/silkkycloud/traefik:2.5.6
+    command: --configFile=/etc/traefik/traefik.yml
+    cap_add:
+      # Image runs rootless, This allows Docker to bind the privileged ports
+      - NET_BIND_SERVICE
     hostname: cockroach-lb
     networks:
       - cockroachdb_net
@@ -17,17 +20,22 @@ services:
       update_config:
         parallelism: 1
         failure_action: rollback
-        delay: 10s
       resources:
         reservations:
-          memory: 5M
+          memory: 25M
           cpus: '0.05'
         limits:
-          memory: 100M
+          memory: 150M
           cpus: '0.1'
     configs:
-      - source: haproxy_config
-        target: /usr/local/etc/haproxy/haproxy.cfg
+      - source: traefik-static
+        target: /etc/traefik/traefik.yml
+        uid: "1000"
+        gid: "1000"
+      - source: traefik-dynamic
+        target: /etc/traefik/dynamic.yml
+        uid: "1000"
+        gid: "1000"
 
   db-1:
     image: cockroachdb/cockroach:v21.2.3
@@ -233,10 +241,12 @@ volumes:
   importer_data:
 
 configs:
-  haproxy_config:
-    file: ./haproxy.cfg
   importer_caddyfile:
     file: ./Importer.Caddyfile
+  traefik-static:
+    file: ./traefik/traefik.yml
+  traefik-dynamic:
+    file: ./traefik/dynamic.yml
 
 secrets:
   # CA certificate

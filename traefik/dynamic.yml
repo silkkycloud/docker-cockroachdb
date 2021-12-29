@@ -1,0 +1,15 @@
+tcp:
+  services:
+    cockroachdb-service:
+      loadBalancer:
+        servers:
+          - address: "cockroachdb-1:26257"
+          - address: "cockroachdb-2:26257"
+          - address: "cockroachdb-3:26257"
+
+  routers:
+    cockroachdb:
+      rule: HostSNI(`*`)
+      entryPoints:
+        - cockroach
+      service: cockroachdb-service@file

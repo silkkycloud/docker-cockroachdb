@@ -1,0 +1,13 @@
+serversTransport:
+  insecureSkipVerify: true
+
+api:
+  dashboard: false
+
+providers:
+  file:
+    filename: /etc/traefik/dynamic.yml
+
+entryPoints:
+  cockroach:
+    address: :26257
