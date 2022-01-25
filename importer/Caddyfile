@@ -1,12 +1,8 @@
-{
-  order webdav before file_server
-}
-
 :3000
 
-@get method GET
-
 root * /srv
+
+@get method GET
 
 route {
   file_server @get

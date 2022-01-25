@@ -9,8 +9,8 @@ RUN xcaddy build \
 ####################################################################################################
 ## Final image
 ####################################################################################################
-FROM ghcr.io/silkkycloud/caddy:2.4.6
+FROM caddy:2.4.6-alpine
 
-COPY --from=builder --chown=caddy:caddy /usr/bin/caddy /usr/bin/caddy
+COPY --from=builder /usr/bin/caddy /usr/bin/caddy
 
-COPY --chown=caddy:caddy ./importer/Caddyfile /etc/caddy/Caddyfile
+COPY ./importer/Caddyfile /etc/caddy/Caddyfile
