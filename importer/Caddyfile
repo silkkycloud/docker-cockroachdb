@@ -1,3 +1,7 @@
+{
+  order webdav before file_server
+}
+
 :3000
 
 @get method GET
