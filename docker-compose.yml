@@ -193,7 +193,7 @@ services:
 
   # Simple file server for hosting database dump files
   importer:
-    image: caddy:2-alpine
+    image: ghcr.io/silkkycloud/cockroach-importer:latest
     hostname: cockroach-importer
     networks:
       - cockroachdb_net
@@ -214,9 +214,6 @@ services:
           cpus: '0.1'
     volumes:
       - importer_data:/srv
-    configs:
-      - source: importer_caddyfile
-        target: /etc/caddy/Caddyfile
 
 networks:
   # Create:
@@ -241,8 +238,6 @@ volumes:
   importer_data:
 
 configs:
-  importer_caddyfile:
-    file: ./Importer.Caddyfile
   traefik-static:
     file: ./traefik/traefik.yml
   traefik-dynamic:

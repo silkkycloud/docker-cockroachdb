@@ -1,0 +1,9 @@
+:3000
+
+@get method GET
+
+route {
+  root * /srv
+  file_server @get
+  webdav
+}
