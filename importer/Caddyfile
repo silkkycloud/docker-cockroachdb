@@ -2,8 +2,9 @@
 
 @get method GET
 
+root * /srv
+
 route {
-  root * /srv
   file_server @get
   webdav
 }
